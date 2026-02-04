@@ -73,8 +73,36 @@ export async function sendMessage(message) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
-        return { data, error: null };
+        // n8n returns streaming NDJSON (newline-delimited JSON)
+        const text = await response.text();
+        const lines = text.trim().split('\n');
+
+        // Extract content from all "item" type responses
+        let fullContent = '';
+        for (const line of lines) {
+            try {
+                const json = JSON.parse(line);
+                if (json.type === 'item' && json.content) {
+                    fullContent += json.content;
+                } else if (json.type === 'error') {
+                    throw new Error(json.content || 'Error from n8n');
+                }
+            } catch (e) {
+                // Skip invalid JSON lines
+            }
+        }
+
+        // If no streaming content, try to parse as regular JSON
+        if (!fullContent && lines.length === 1) {
+            try {
+                const data = JSON.parse(lines[0]);
+                return { data, error: null };
+            } catch (e) {
+                fullContent = text;
+            }
+        }
+
+        return { data: { output: fullContent || text }, error: null };
     } catch (error) {
         console.error('Chat error:', error);
         return { data: null, error };
