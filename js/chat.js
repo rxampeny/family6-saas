@@ -63,7 +63,8 @@ export async function sendMessage(message) {
         const response = await fetch(CONFIG.N8N_WEBHOOK_URL, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': 'true'
             },
             body: JSON.stringify(payload)
         });
