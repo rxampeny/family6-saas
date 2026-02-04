@@ -23,15 +23,27 @@ function generateSessionId() {
 }
 
 /**
- * Get or create session ID
+ * Get or create session ID (includes userId prefix for filtering)
+ * Format: {userId}_{uuid}
  * @returns {string} Session ID
  */
 function getSessionId() {
     if (!sessionId) {
         // Try to restore from sessionStorage
         sessionId = sessionStorage.getItem('chat_session_id');
+
+        // Check if existing session belongs to current user
+        if (sessionId && currentUser?.id) {
+            const sessionUserId = sessionId.split('_')[0];
+            if (sessionUserId !== currentUser.id) {
+                // Different user, create new session
+                sessionId = null;
+            }
+        }
+
         if (!sessionId) {
-            sessionId = generateSessionId();
+            const userId = currentUser?.id || 'anonymous';
+            sessionId = `${userId}_${generateSessionId()}`;
             sessionStorage.setItem('chat_session_id', sessionId);
         }
     }
@@ -268,8 +280,9 @@ export function clearChat() {
         `;
     }
 
-    // Generate new session
-    sessionId = generateSessionId();
+    // Generate new session with userId prefix
+    const userId = currentUser?.id || 'anonymous';
+    sessionId = `${userId}_${generateSessionId()}`;
     sessionStorage.setItem('chat_session_id', sessionId);
 }
 

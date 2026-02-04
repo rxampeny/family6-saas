@@ -127,6 +127,74 @@
         .error-state .btn {
             margin-top: var(--spacing-4);
         }
+        /* Expandable conversation styles */
+        .conversation-card {
+            overflow: hidden;
+        }
+        .conversation-card .expand-icon {
+            transition: transform 0.2s ease;
+        }
+        .conversation-card.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+        .conversation-messages {
+            display: none;
+            margin-top: var(--spacing-4);
+            padding-top: var(--spacing-4);
+            border-top: 1px solid var(--color-gray-200);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .conversation-card.expanded .conversation-messages {
+            display: block;
+        }
+        .message-item {
+            padding: var(--spacing-3);
+            margin-bottom: var(--spacing-2);
+            border-radius: var(--radius-lg);
+            font-size: var(--font-size-sm);
+            line-height: 1.5;
+        }
+        .message-item.human {
+            background: var(--color-primary);
+            color: white;
+            margin-left: var(--spacing-8);
+        }
+        .message-item.ai {
+            background: var(--color-gray-100);
+            color: var(--color-gray-800);
+            margin-right: var(--spacing-8);
+        }
+        .message-label {
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            margin-bottom: var(--spacing-1);
+            opacity: 0.8;
+        }
+        .conversation-header {
+            cursor: pointer;
+        }
+        .conversation-header-left {
+            flex: 1;
+        }
+        .expand-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-2);
+            font-size: var(--font-size-sm);
+            color: var(--color-primary);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: var(--spacing-2);
+        }
+        .expand-btn:hover {
+            opacity: 0.8;
+        }
+        .expand-btn svg {
+            width: 20px;
+            height: 20px;
+        }
     </style>
 </head>
 <body>
@@ -244,15 +312,42 @@
         const conversationsList = document.getElementById('conversationsList');
         const errorMessage = document.getElementById('errorMessage');
 
+        // Current user
+        let currentUser = null;
+
         /**
-         * Renders a conversation card
+         * Renders messages for expandable view
+         */
+        function renderMessages(messages) {
+            return messages.map(msg => `
+                <div class="message-item ${msg.type}">
+                    <div class="message-label">${msg.type === 'human' ? 'Usuario' : 'Asistente'}</div>
+                    <div class="message-content">${escapeHtml(msg.content)}</div>
+                </div>
+            `).join('');
+        }
+
+        /**
+         * Renders a conversation card with expandable messages
          */
         function renderConversationCard(conversation) {
+            const sessionDisplay = conversation.sessionId.includes('_')
+                ? conversation.sessionId.split('_')[1].substring(0, 8)
+                : conversation.sessionId.substring(0, 8);
+
             return `
                 <div class="conversation-card" data-session-id="${conversation.sessionId}">
-                    <div class="conversation-header">
-                        <h3 class="conversation-title">${escapeHtml(conversation.title)}</h3>
-                        <span class="conversation-date">ID: ${conversation.sessionId.substring(0, 8)}...</span>
+                    <div class="conversation-header" onclick="toggleConversation(this)">
+                        <div class="conversation-header-left">
+                            <h3 class="conversation-title">${escapeHtml(conversation.title)}</h3>
+                            <span class="conversation-date">Session: ${sessionDisplay}...</span>
+                        </div>
+                        <button class="expand-btn">
+                            <span class="expand-text">Ver mensajes</span>
+                            <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
                     </div>
                     <p class="conversation-preview">${escapeHtml(conversation.preview)}</p>
                     <div class="conversation-meta">
@@ -278,9 +373,22 @@
                             ${conversation.aiMessages} asistente
                         </span>
                     </div>
+                    <div class="conversation-messages">
+                        ${renderMessages(conversation.messages)}
+                    </div>
                 </div>
             `;
         }
+
+        /**
+         * Toggle conversation expansion
+         */
+        window.toggleConversation = function(headerEl) {
+            const card = headerEl.closest('.conversation-card');
+            const isExpanded = card.classList.toggle('expanded');
+            const expandText = card.querySelector('.expand-text');
+            expandText.textContent = isExpanded ? 'Ocultar' : 'Ver mensajes';
+        };
 
         /**
          * Escapes HTML to prevent XSS
@@ -302,13 +410,15 @@
         }
 
         /**
-         * Loads and displays conversations
+         * Loads and displays conversations for the current user
          */
         async function loadConversations() {
             showState('loading');
 
             try {
-                const conversations = await getConversations();
+                // Pass user ID to filter conversations
+                const userId = currentUser?.id || null;
+                const conversations = await getConversations(userId);
 
                 if (conversations.length === 0) {
                     showState('empty');
@@ -326,6 +436,7 @@
         protectPage(async (session) => {
             const { data } = await getUser();
             const user = data?.user;
+            currentUser = user;
 
             if (user) {
                 document.getElementById('userEmail').textContent = user.email;

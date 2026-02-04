@@ -8,16 +8,36 @@ import supabaseChatClient from './supabase-chat-client.js';
 const TABLE_NAME = 'n8n_chat_historias_04022026';
 
 /**
+ * Extrae el userId del session_id (formato: {userId}_{uuid})
+ * @param {string} sessionId - ID de la sesion
+ * @returns {string|null} userId o null si no tiene formato correcto
+ */
+function extractUserIdFromSession(sessionId) {
+    if (!sessionId || !sessionId.includes('_')) {
+        return null;
+    }
+    return sessionId.split('_')[0];
+}
+
+/**
  * Obtiene todas las conversaciones agrupadas por session_id
+ * @param {string} userId - ID del usuario para filtrar (opcional)
  * @returns {Promise<Array>} Lista de conversaciones con metadata
  */
-export async function getConversations() {
+export async function getConversations(userId = null) {
     try {
         // Obtener todos los mensajes ordenados por id
-        const { data, error } = await supabaseChatClient
+        let query = supabaseChatClient
             .from(TABLE_NAME)
             .select('*')
             .order('id', { ascending: true });
+
+        // Si hay userId, filtrar por session_id que empiece con ese userId
+        if (userId) {
+            query = query.like('session_id', `${userId}_%`);
+        }
+
+        const { data, error } = await query;
 
         if (error) {
             console.error('Error fetching conversations:', error);
@@ -75,7 +95,8 @@ export async function getConversations() {
                 humanMessages: humanMessages.length,
                 aiMessages: aiMessages.length,
                 firstMessageId: session.firstMessageId,
-                lastMessageId: session.messages[session.messages.length - 1]?.id
+                lastMessageId: session.messages[session.messages.length - 1]?.id,
+                messages: session.messages // Include all messages for expandable UI
             };
         });
 
