@@ -92,6 +92,41 @@
             margin-bottom: var(--spacing-2);
             color: var(--color-gray-700);
         }
+        .loading-state {
+            text-align: center;
+            padding: var(--spacing-16);
+            color: var(--color-gray-500);
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--color-gray-200);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto var(--spacing-4);
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .error-state {
+            text-align: center;
+            padding: var(--spacing-16);
+            color: var(--color-gray-500);
+        }
+        .error-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: var(--spacing-4);
+            color: var(--color-error, #ef4444);
+        }
+        .error-state h3 {
+            margin-bottom: var(--spacing-2);
+            color: var(--color-gray-700);
+        }
+        .error-state .btn {
+            margin-top: var(--spacing-4);
+        }
     </style>
 </head>
 <body>
@@ -161,76 +196,36 @@
             <main class="dashboard-main">
                 <h1>Conversaciones</h1>
 
-                <div class="conversations-list" id="conversationsList">
-                    <!-- Sample conversations -->
-                    <div class="conversation-card">
-                        <div class="conversation-header">
-                            <h3 class="conversation-title">Consulta sobre precios</h3>
-                            <span class="conversation-date">Hace 2 horas</span>
-                        </div>
-                        <p class="conversation-preview">Usuario: Hola, me gustaria saber los precios de sus servicios... Asistente: Claro, con gusto te explico nuestros planes...</p>
-                        <div class="conversation-meta">
-                            <span class="conversation-stat">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                                </svg>
-                                12 mensajes
-                            </span>
-                            <span class="conversation-stat">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <polyline points="12 6 12 12 16 14"/>
-                                </svg>
-                                8 min
-                            </span>
-                        </div>
-                    </div>
+                <!-- Loading Spinner -->
+                <div class="loading-state" id="loadingState">
+                    <div class="spinner"></div>
+                    <p>Cargando conversaciones...</p>
+                </div>
 
-                    <div class="conversation-card">
-                        <div class="conversation-header">
-                            <h3 class="conversation-title">Soporte tecnico</h3>
-                            <span class="conversation-date">Ayer</span>
-                        </div>
-                        <p class="conversation-preview">Usuario: Tengo un problema con la integracion... Asistente: Entiendo, vamos a revisar los logs para encontrar el problema...</p>
-                        <div class="conversation-meta">
-                            <span class="conversation-stat">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                                </svg>
-                                24 mensajes
-                            </span>
-                            <span class="conversation-stat">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <polyline points="12 6 12 12 16 14"/>
-                                </svg>
-                                15 min
-                            </span>
-                        </div>
-                    </div>
+                <!-- Error State -->
+                <div class="error-state" id="errorState" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <h3>Error al cargar conversaciones</h3>
+                    <p id="errorMessage">Ocurrio un error inesperado</p>
+                    <button class="btn btn-primary" onclick="location.reload()">Reintentar</button>
+                </div>
 
-                    <div class="conversation-card">
-                        <div class="conversation-header">
-                            <h3 class="conversation-title">Nueva funcionalidad</h3>
-                            <span class="conversation-date">Hace 3 dias</span>
-                        </div>
-                        <p class="conversation-preview">Usuario: Es posible agregar una funcion de exportar a PDF? Asistente: Excelente sugerencia, lo agregare a nuestra lista de mejoras...</p>
-                        <div class="conversation-meta">
-                            <span class="conversation-stat">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                                </svg>
-                                8 mensajes
-                            </span>
-                            <span class="conversation-stat">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <polyline points="12 6 12 12 16 14"/>
-                                </svg>
-                                5 min
-                            </span>
-                        </div>
-                    </div>
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <h3>No hay conversaciones</h3>
+                    <p>Las conversaciones con el asistente apareceran aqui</p>
+                </div>
+
+                <!-- Conversations List -->
+                <div class="conversations-list" id="conversationsList" style="display: none;">
+                    <!-- Conversations will be rendered here dynamically -->
                 </div>
             </main>
         </div>
@@ -240,6 +235,93 @@
         import { signOut, getUser } from './js/auth.js';
         import { protectPage } from './js/router.js';
         import CONFIG from './js/config.js';
+        import { getConversations } from './js/chat-history.js';
+
+        // DOM Elements
+        const loadingState = document.getElementById('loadingState');
+        const errorState = document.getElementById('errorState');
+        const emptyState = document.getElementById('emptyState');
+        const conversationsList = document.getElementById('conversationsList');
+        const errorMessage = document.getElementById('errorMessage');
+
+        /**
+         * Renders a conversation card
+         */
+        function renderConversationCard(conversation) {
+            return `
+                <div class="conversation-card" data-session-id="${conversation.sessionId}">
+                    <div class="conversation-header">
+                        <h3 class="conversation-title">${escapeHtml(conversation.title)}</h3>
+                        <span class="conversation-date">ID: ${conversation.sessionId.substring(0, 8)}...</span>
+                    </div>
+                    <p class="conversation-preview">${escapeHtml(conversation.preview)}</p>
+                    <div class="conversation-meta">
+                        <span class="conversation-stat">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            ${conversation.totalMessages} mensajes
+                        </span>
+                        <span class="conversation-stat">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            ${conversation.humanMessages} usuario
+                        </span>
+                        <span class="conversation-stat">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="9" y1="9" x2="15" y2="9"/>
+                                <line x1="9" y1="15" x2="15" y2="15"/>
+                            </svg>
+                            ${conversation.aiMessages} asistente
+                        </span>
+                    </div>
+                </div>
+            `;
+        }
+
+        /**
+         * Escapes HTML to prevent XSS
+         */
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        /**
+         * Shows a specific state (loading, error, empty, or list)
+         */
+        function showState(state) {
+            loadingState.style.display = state === 'loading' ? 'block' : 'none';
+            errorState.style.display = state === 'error' ? 'block' : 'none';
+            emptyState.style.display = state === 'empty' ? 'block' : 'none';
+            conversationsList.style.display = state === 'list' ? 'flex' : 'none';
+        }
+
+        /**
+         * Loads and displays conversations
+         */
+        async function loadConversations() {
+            showState('loading');
+
+            try {
+                const conversations = await getConversations();
+
+                if (conversations.length === 0) {
+                    showState('empty');
+                } else {
+                    conversationsList.innerHTML = conversations.map(renderConversationCard).join('');
+                    showState('list');
+                }
+            } catch (error) {
+                console.error('Failed to load conversations:', error);
+                errorMessage.textContent = error.message || 'Ocurrio un error al cargar las conversaciones';
+                showState('error');
+            }
+        }
 
         protectPage(async (session) => {
             const { data } = await getUser();
@@ -251,6 +333,9 @@
             }
 
             document.querySelector('.dashboard-layout').style.opacity = '1';
+
+            // Load conversations after page is ready
+            await loadConversations();
         });
 
         document.getElementById('logoutBtn').addEventListener('click', async () => {
