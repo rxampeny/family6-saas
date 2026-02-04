@@ -9,7 +9,7 @@ const CONFIG = {
     SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxYm1xandnZ2t0cmppdGFjbW5qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMDMxMDEsImV4cCI6MjA4NTc3OTEwMX0.XWMC62PqiKHjdYETEeffUPEoNY_T6EY8hojveliJzrU',
 
     // n8n Webhook Configuration
-    N8N_WEBHOOK_URL: 'https://ae3b30ab3df3.ngrok-free.app/webhook/dda36856-64ca-41d6-81b9-d335e8e807a9/chat',
+    N8N_WEBHOOK_URL: 'https://71ef-113-203-165-102.ngrok-free.app/webhook/dda36856-64ca-41d6-81b9-d335e8e807a9/chat',
 
     // App Configuration
     APP_NAME: 'Family6 SaaS',
