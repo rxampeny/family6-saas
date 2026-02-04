@@ -27,7 +27,7 @@ const CONFIG = {
     },
 
     // Protected routes that require authentication
-    PROTECTED_ROUTES: ['/dashboard.html'],
+    PROTECTED_ROUTES: ['/dashboard.html', '/conversaciones.html', '/analiticas.html', '/configuracion.html'],
 
     // Auth routes that should redirect to dashboard if already logged in
     AUTH_ROUTES: ['/login.html', '/register.html']

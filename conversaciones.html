@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversaciones - Family6 SaaS</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        .conversations-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-4);
+        }
+        .conversation-card {
+            background: var(--color-white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-5);
+            border: 1px solid var(--color-gray-200);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .conversation-card:hover {
+            border-color: var(--color-primary);
+            box-shadow: var(--shadow-md);
+        }
+        .conversation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-3);
+        }
+        .conversation-title {
+            font-weight: 600;
+            color: var(--color-gray-900);
+            margin: 0;
+        }
+        .conversation-date {
+            font-size: var(--font-size-sm);
+            color: var(--color-gray-400);
+        }
+        .conversation-preview {
+            color: var(--color-gray-600);
+            font-size: var(--font-size-sm);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .conversation-meta {
+            display: flex;
+            gap: var(--spacing-4);
+            margin-top: var(--spacing-3);
+            padding-top: var(--spacing-3);
+            border-top: 1px solid var(--color-gray-100);
+        }
+        .conversation-stat {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-2);
+            font-size: var(--font-size-sm);
+            color: var(--color-gray-500);
+        }
+        .conversation-stat svg {
+            width: 16px;
+            height: 16px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-16);
+            color: var(--color-gray-500);
+        }
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: var(--spacing-4);
+            color: var(--color-gray-300);
+        }
+        .empty-state h3 {
+            margin-bottom: var(--spacing-2);
+            color: var(--color-gray-700);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="dashboard-logo">
+                <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
+                    <rect width="40" height="40" rx="10" fill="url(#gradient2)"/>
+                    <path d="M12 20L18 26L28 14" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    <defs>
+                        <linearGradient id="gradient2" x1="0" y1="0" x2="40" y2="40">
+                            <stop stop-color="#6366F1"/>
+                            <stop offset="1" stop-color="#4F46E5"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                Family6
+            </div>
+            <div class="dashboard-user">
+                <span class="user-email" id="userEmail">usuario@email.com</span>
+                <div class="user-avatar" id="userAvatar">U</div>
+                <button class="btn btn-secondary btn-sm" id="logoutBtn">Cerrar sesion</button>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <div class="dashboard-content">
+            <!-- Sidebar -->
+            <aside class="dashboard-sidebar">
+                <nav class="sidebar-nav">
+                    <div class="sidebar-section">
+                        <span class="sidebar-section-title">Menu</span>
+                        <a href="dashboard.html" class="sidebar-link">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                <polyline points="9 22 9 12 15 12 15 22"/>
+                            </svg>
+                            Dashboard
+                        </a>
+                        <a href="conversaciones.html" class="sidebar-link active">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            Conversaciones
+                        </a>
+                        <a href="analiticas.html" class="sidebar-link">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="20" x2="12" y2="10"/>
+                                <line x1="18" y1="20" x2="18" y2="4"/>
+                                <line x1="6" y1="20" x2="6" y2="16"/>
+                            </svg>
+                            Analiticas
+                        </a>
+                        <a href="configuracion.html" class="sidebar-link">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                            </svg>
+                            Configuracion
+                        </a>
+                    </div>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="dashboard-main">
+                <h1>Conversaciones</h1>
+
+                <div class="conversations-list" id="conversationsList">
+                    <!-- Sample conversations -->
+                    <div class="conversation-card">
+                        <div class="conversation-header">
+                            <h3 class="conversation-title">Consulta sobre precios</h3>
+                            <span class="conversation-date">Hace 2 horas</span>
+                        </div>
+                        <p class="conversation-preview">Usuario: Hola, me gustaria saber los precios de sus servicios... Asistente: Claro, con gusto te explico nuestros planes...</p>
+                        <div class="conversation-meta">
+                            <span class="conversation-stat">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                </svg>
+                                12 mensajes
+                            </span>
+                            <span class="conversation-stat">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                                8 min
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="conversation-card">
+                        <div class="conversation-header">
+                            <h3 class="conversation-title">Soporte tecnico</h3>
+                            <span class="conversation-date">Ayer</span>
+                        </div>
+                        <p class="conversation-preview">Usuario: Tengo un problema con la integracion... Asistente: Entiendo, vamos a revisar los logs para encontrar el problema...</p>
+                        <div class="conversation-meta">
+                            <span class="conversation-stat">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                </svg>
+                                24 mensajes
+                            </span>
+                            <span class="conversation-stat">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                                15 min
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="conversation-card">
+                        <div class="conversation-header">
+                            <h3 class="conversation-title">Nueva funcionalidad</h3>
+                            <span class="conversation-date">Hace 3 dias</span>
+                        </div>
+                        <p class="conversation-preview">Usuario: Es posible agregar una funcion de exportar a PDF? Asistente: Excelente sugerencia, lo agregare a nuestra lista de mejoras...</p>
+                        <div class="conversation-meta">
+                            <span class="conversation-stat">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                </svg>
+                                8 mensajes
+                            </span>
+                            <span class="conversation-stat">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                                5 min
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script type="module">
+        import { signOut, getUser } from './js/auth.js';
+        import { protectPage } from './js/router.js';
+        import CONFIG from './js/config.js';
+
+        protectPage(async (session) => {
+            const { data } = await getUser();
+            const user = data?.user;
+
+            if (user) {
+                document.getElementById('userEmail').textContent = user.email;
+                document.getElementById('userAvatar').textContent = user.email.charAt(0).toUpperCase();
+            }
+
+            document.querySelector('.dashboard-layout').style.opacity = '1';
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await signOut();
+            window.location.href = CONFIG.ROUTES.LOGIN;
+        });
+    </script>
+</body>
+</html>
