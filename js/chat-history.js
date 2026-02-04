@@ -150,3 +150,102 @@ function truncateText(text, maxLength) {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength).trim() + '...';
 }
+
+/**
+ * Obtiene estadisticas de conversaciones para un usuario
+ * @param {string} userId - ID del usuario (opcional)
+ * @returns {Promise<Object>} Estadisticas
+ */
+export async function getConversationStats(userId = null) {
+    try {
+        let query = supabaseChatClient
+            .from(TABLE_NAME)
+            .select('*')
+            .order('id', { ascending: true });
+
+        if (userId) {
+            query = query.like('session_id', `${userId}_%`);
+        }
+
+        const { data, error } = await query;
+
+        if (error) {
+            console.error('Error fetching stats:', error);
+            throw error;
+        }
+
+        if (!data || data.length === 0) {
+            return {
+                totalConversations: 0,
+                totalMessages: 0,
+                humanMessages: 0,
+                aiMessages: 0,
+                messagesByDay: [],
+                recentConversations: []
+            };
+        }
+
+        // Count unique sessions
+        const sessions = new Set();
+        let humanCount = 0;
+        let aiCount = 0;
+
+        // Track messages by day (using message ID ranges as proxy for time)
+        const messagesBySession = new Map();
+
+        data.forEach(row => {
+            sessions.add(row.session_id);
+
+            const msgType = row.message?.type;
+            if (msgType === 'human') humanCount++;
+            else if (msgType === 'ai') aiCount++;
+
+            // Group by session for recent activity
+            if (!messagesBySession.has(row.session_id)) {
+                messagesBySession.set(row.session_id, []);
+            }
+            messagesBySession.get(row.session_id).push(row);
+        });
+
+        // Get last 7 "days" worth of data (simulated by dividing IDs into 7 buckets)
+        const minId = Math.min(...data.map(d => d.id));
+        const maxId = Math.max(...data.map(d => d.id));
+        const range = maxId - minId + 1;
+        const bucketSize = Math.max(1, Math.ceil(range / 7));
+
+        const dayLabels = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
+        const messagesByDay = dayLabels.map((label, index) => {
+            const bucketStart = minId + (index * bucketSize);
+            const bucketEnd = bucketStart + bucketSize;
+            const count = data.filter(d => d.id >= bucketStart && d.id < bucketEnd).length;
+            return { label, count };
+        });
+
+        // Find max for percentage calculation
+        const maxCount = Math.max(...messagesByDay.map(d => d.count), 1);
+        messagesByDay.forEach(day => {
+            day.percentage = Math.round((day.count / maxCount) * 100);
+        });
+
+        // Recent conversations (last 5 sessions by last message ID)
+        const sessionLastIds = Array.from(messagesBySession.entries()).map(([sessionId, messages]) => ({
+            sessionId,
+            lastId: Math.max(...messages.map(m => m.id)),
+            messageCount: messages.length
+        }));
+        sessionLastIds.sort((a, b) => b.lastId - a.lastId);
+        const recentConversations = sessionLastIds.slice(0, 5);
+
+        return {
+            totalConversations: sessions.size,
+            totalMessages: data.length,
+            humanMessages: humanCount,
+            aiMessages: aiCount,
+            messagesByDay,
+            recentConversations
+        };
+    } catch (error) {
+        console.error('Error in getConversationStats:', error);
+        throw error;
+    }
+}

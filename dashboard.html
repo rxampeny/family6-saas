@@ -99,25 +99,20 @@
                 <div class="dashboard-grid">
                     <div class="dashboard-card">
                         <div class="dashboard-card-header">
-                            <span class="dashboard-card-title">Mensajes hoy</span>
+                            <span class="dashboard-card-title">Total Mensajes</span>
                             <div class="dashboard-card-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
                                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                                 </svg>
                             </div>
                         </div>
-                        <div class="dashboard-card-value">24</div>
-                        <div class="dashboard-card-change positive">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                            </svg>
-                            +12% vs ayer
-                        </div>
+                        <div class="dashboard-card-value" id="statTotalMessages">-</div>
+                        <div class="dashboard-card-change" id="statMessagesDetail">Cargando...</div>
                     </div>
 
                     <div class="dashboard-card">
                         <div class="dashboard-card-header">
-                            <span class="dashboard-card-title">Conversaciones activas</span>
+                            <span class="dashboard-card-title">Conversaciones</span>
                             <div class="dashboard-card-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
                                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -127,59 +122,45 @@
                                 </svg>
                             </div>
                         </div>
-                        <div class="dashboard-card-value">8</div>
-                        <div class="dashboard-card-change positive">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                            </svg>
-                            +3 esta semana
-                        </div>
+                        <div class="dashboard-card-value" id="statConversations">-</div>
+                        <div class="dashboard-card-change" id="statConversationsDetail">Cargando...</div>
                     </div>
 
                     <div class="dashboard-card">
                         <div class="dashboard-card-header">
-                            <span class="dashboard-card-title">Tiempo de respuesta</span>
+                            <span class="dashboard-card-title">Mensajes Usuario</span>
                             <div class="dashboard-card-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <polyline points="12 6 12 12 16 14"/>
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
                                 </svg>
                             </div>
                         </div>
-                        <div class="dashboard-card-value">1.2s</div>
-                        <div class="dashboard-card-change negative">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                                <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/>
-                            </svg>
-                            +0.1s vs promedio
-                        </div>
+                        <div class="dashboard-card-value" id="statHumanMessages">-</div>
+                        <div class="dashboard-card-change" id="statHumanDetail">Cargando...</div>
                     </div>
 
                     <div class="dashboard-card">
                         <div class="dashboard-card-header">
-                            <span class="dashboard-card-title">Satisfaccion</span>
+                            <span class="dashboard-card-title">Respuestas IA</span>
                             <div class="dashboard-card-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-                                    <line x1="9" y1="9" x2="9.01" y2="9"/>
-                                    <line x1="15" y1="9" x2="15.01" y2="9"/>
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                    <line x1="9" y1="9" x2="15" y2="9"/>
+                                    <line x1="9" y1="15" x2="15" y2="15"/>
                                 </svg>
                             </div>
                         </div>
-                        <div class="dashboard-card-value">94%</div>
-                        <div class="dashboard-card-change positive">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                            </svg>
-                            +2% este mes
-                        </div>
+                        <div class="dashboard-card-value" id="statAiMessages">-</div>
+                        <div class="dashboard-card-change" id="statAiDetail">Cargando...</div>
                     </div>
                 </div>
 
                 <div class="dashboard-card mt-8">
                     <h3 style="margin-bottom: var(--spacing-4);">Actividad reciente</h3>
-                    <p class="text-muted">Aqui veras la actividad reciente de tus conversaciones y automatizaciones.</p>
+                    <div id="recentActivity">
+                        <p class="text-muted">Cargando actividad...</p>
+                    </div>
                 </div>
             </main>
         </div>
@@ -240,6 +221,46 @@
         import { initChat } from './js/chat.js';
         import { showToast } from './js/ui.js';
         import CONFIG from './js/config.js';
+        import { getConversationStats } from './js/chat-history.js';
+
+        /**
+         * Load and display dashboard statistics
+         */
+        async function loadDashboardStats(userId) {
+            try {
+                const stats = await getConversationStats(userId);
+
+                // Update stat cards
+                document.getElementById('statTotalMessages').textContent = stats.totalMessages;
+                document.getElementById('statMessagesDetail').textContent = `${stats.humanMessages} enviados, ${stats.aiMessages} recibidos`;
+
+                document.getElementById('statConversations').textContent = stats.totalConversations;
+                document.getElementById('statConversationsDetail').textContent = stats.totalConversations === 1 ? '1 sesion de chat' : `${stats.totalConversations} sesiones de chat`;
+
+                document.getElementById('statHumanMessages').textContent = stats.humanMessages;
+                document.getElementById('statHumanDetail').textContent = 'Mensajes enviados por ti';
+
+                document.getElementById('statAiMessages').textContent = stats.aiMessages;
+                document.getElementById('statAiDetail').textContent = 'Respuestas del asistente';
+
+                // Update recent activity
+                const recentDiv = document.getElementById('recentActivity');
+                if (stats.recentConversations.length === 0) {
+                    recentDiv.innerHTML = '<p class="text-muted">No hay actividad reciente. Inicia una conversacion con el asistente.</p>';
+                } else {
+                    recentDiv.innerHTML = stats.recentConversations.map(conv => `
+                        <div style="display: flex; justify-content: space-between; padding: var(--spacing-3) 0; border-bottom: 1px solid var(--color-gray-100);">
+                            <span style="color: var(--color-gray-700);">Conversacion ${conv.sessionId.substring(0, 8)}...</span>
+                            <span style="color: var(--color-gray-500); font-size: var(--font-size-sm);">${conv.messageCount} mensajes</span>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading dashboard stats:', error);
+                document.getElementById('statTotalMessages').textContent = '0';
+                document.getElementById('statMessagesDetail').textContent = 'Error al cargar';
+            }
+        }
 
         // Protect the page - redirect to login if not authenticated
         protectPage(
@@ -252,6 +273,9 @@
                     // Update UI with user info
                     document.getElementById('userEmail').textContent = user.email;
                     document.getElementById('userAvatar').textContent = user.email.charAt(0).toUpperCase();
+
+                    // Load stats for this user
+                    loadDashboardStats(user.id);
                 }
 
                 // Initialize chat

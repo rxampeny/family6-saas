@@ -249,13 +249,13 @@
                                 </svg>
                             </div>
                         </div>
-                        <div class="stat-value">1,284</div>
-                        <div class="stat-change positive">+12.5% vs mes anterior</div>
+                        <div class="stat-value" id="statConversations">-</div>
+                        <div class="stat-change" id="statConversationsDetail">Cargando...</div>
                     </div>
 
                     <div class="stat-card">
                         <div class="stat-card-header">
-                            <span class="stat-card-title">Mensajes Enviados</span>
+                            <span class="stat-card-title">Total Mensajes</span>
                             <div class="stat-card-icon green">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <line x1="22" y1="2" x2="11" y2="13"/>
@@ -263,134 +263,65 @@
                                 </svg>
                             </div>
                         </div>
-                        <div class="stat-value">8,942</div>
-                        <div class="stat-change positive">+8.2% vs mes anterior</div>
+                        <div class="stat-value" id="statMessages">-</div>
+                        <div class="stat-change" id="statMessagesDetail">Cargando...</div>
                     </div>
 
                     <div class="stat-card">
                         <div class="stat-card-header">
-                            <span class="stat-card-title">Tiempo Promedio</span>
+                            <span class="stat-card-title">Mensajes Usuario</span>
                             <div class="stat-card-icon purple">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <polyline points="12 6 12 12 16 14"/>
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
                                 </svg>
                             </div>
                         </div>
-                        <div class="stat-value">4.2 min</div>
-                        <div class="stat-change negative">+0.3 min vs mes anterior</div>
+                        <div class="stat-value" id="statHuman">-</div>
+                        <div class="stat-change" id="statHumanDetail">Cargando...</div>
                     </div>
 
                     <div class="stat-card">
                         <div class="stat-card-header">
-                            <span class="stat-card-title">Satisfaccion</span>
+                            <span class="stat-card-title">Respuestas IA</span>
                             <div class="stat-card-icon orange">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-                                    <line x1="9" y1="9" x2="9.01" y2="9"/>
-                                    <line x1="15" y1="9" x2="15.01" y2="9"/>
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                    <line x1="9" y1="9" x2="15" y2="9"/>
+                                    <line x1="9" y1="15" x2="15" y2="15"/>
                                 </svg>
                             </div>
                         </div>
-                        <div class="stat-value">94%</div>
-                        <div class="stat-change positive">+2% vs mes anterior</div>
+                        <div class="stat-value" id="statAi">-</div>
+                        <div class="stat-change" id="statAiDetail">Cargando...</div>
                     </div>
                 </div>
 
                 <!-- Chart Section -->
                 <div class="chart-section">
                     <div class="chart-header">
-                        <h3 class="chart-title">Conversaciones por dia</h3>
-                        <select class="form-input" style="width: auto;">
-                            <option>Ultimos 7 dias</option>
-                            <option>Ultimos 30 dias</option>
-                            <option>Este mes</option>
-                        </select>
+                        <h3 class="chart-title">Distribucion de mensajes</h3>
+                        <span class="text-muted" style="font-size: var(--font-size-sm);">Basado en actividad reciente</span>
                     </div>
-                    <div class="bar-chart">
-                        <div class="bar-container">
-                            <div class="bar" style="height: 60%;"></div>
-                            <span class="bar-label">Lun</span>
-                        </div>
-                        <div class="bar-container">
-                            <div class="bar" style="height: 80%;"></div>
-                            <span class="bar-label">Mar</span>
-                        </div>
-                        <div class="bar-container">
-                            <div class="bar" style="height: 45%;"></div>
-                            <span class="bar-label">Mie</span>
-                        </div>
-                        <div class="bar-container">
-                            <div class="bar" style="height: 90%;"></div>
-                            <span class="bar-label">Jue</span>
-                        </div>
-                        <div class="bar-container">
-                            <div class="bar" style="height: 70%;"></div>
-                            <span class="bar-label">Vie</span>
-                        </div>
-                        <div class="bar-container">
-                            <div class="bar" style="height: 30%;"></div>
-                            <span class="bar-label">Sab</span>
-                        </div>
-                        <div class="bar-container">
-                            <div class="bar" style="height: 25%;"></div>
-                            <span class="bar-label">Dom</span>
-                        </div>
+                    <div class="bar-chart" id="barChart">
+                        <!-- Bars will be rendered dynamically -->
+                        <p class="text-muted" style="width: 100%; text-align: center;">Cargando grafico...</p>
                     </div>
                 </div>
 
                 <!-- Recent Section -->
                 <div class="recent-section">
                     <div class="recent-card">
-                        <h3>Temas mas frecuentes</h3>
-                        <div class="recent-list">
-                            <div class="recent-item">
-                                <span class="recent-item-title">Precios y planes</span>
-                                <span class="recent-item-value">234 consultas</span>
-                            </div>
-                            <div class="recent-item">
-                                <span class="recent-item-title">Soporte tecnico</span>
-                                <span class="recent-item-value">189 consultas</span>
-                            </div>
-                            <div class="recent-item">
-                                <span class="recent-item-title">Integraciones</span>
-                                <span class="recent-item-value">156 consultas</span>
-                            </div>
-                            <div class="recent-item">
-                                <span class="recent-item-title">Facturacion</span>
-                                <span class="recent-item-value">98 consultas</span>
-                            </div>
-                            <div class="recent-item">
-                                <span class="recent-item-title">Nuevas funciones</span>
-                                <span class="recent-item-value">87 consultas</span>
-                            </div>
+                        <h3>Conversaciones recientes</h3>
+                        <div class="recent-list" id="recentConversations">
+                            <p class="text-muted">Cargando...</p>
                         </div>
                     </div>
 
                     <div class="recent-card">
-                        <h3>Horas pico</h3>
-                        <div class="recent-list">
-                            <div class="recent-item">
-                                <span class="recent-item-title">10:00 - 12:00</span>
-                                <span class="recent-item-value">Alto trafico</span>
-                            </div>
-                            <div class="recent-item">
-                                <span class="recent-item-title">14:00 - 16:00</span>
-                                <span class="recent-item-value">Alto trafico</span>
-                            </div>
-                            <div class="recent-item">
-                                <span class="recent-item-title">18:00 - 20:00</span>
-                                <span class="recent-item-value">Medio trafico</span>
-                            </div>
-                            <div class="recent-item">
-                                <span class="recent-item-title">08:00 - 10:00</span>
-                                <span class="recent-item-value">Medio trafico</span>
-                            </div>
-                            <div class="recent-item">
-                                <span class="recent-item-title">22:00 - 00:00</span>
-                                <span class="recent-item-value">Bajo trafico</span>
-                            </div>
+                        <h3>Resumen de actividad</h3>
+                        <div class="recent-list" id="activitySummary">
+                            <p class="text-muted">Cargando...</p>
                         </div>
                     </div>
                 </div>
@@ -402,6 +333,81 @@
         import { signOut, getUser } from './js/auth.js';
         import { protectPage } from './js/router.js';
         import CONFIG from './js/config.js';
+        import { getConversationStats } from './js/chat-history.js';
+
+        /**
+         * Load and display analytics
+         */
+        async function loadAnalytics(userId) {
+            try {
+                const stats = await getConversationStats(userId);
+
+                // Update stat cards
+                document.getElementById('statConversations').textContent = stats.totalConversations;
+                document.getElementById('statConversationsDetail').textContent = 'Sesiones de chat totales';
+
+                document.getElementById('statMessages').textContent = stats.totalMessages;
+                document.getElementById('statMessagesDetail').textContent = `${stats.humanMessages} + ${stats.aiMessages} intercambios`;
+
+                document.getElementById('statHuman').textContent = stats.humanMessages;
+                document.getElementById('statHumanDetail').textContent = 'Preguntas realizadas';
+
+                document.getElementById('statAi').textContent = stats.aiMessages;
+                document.getElementById('statAiDetail').textContent = 'Respuestas recibidas';
+
+                // Update bar chart
+                const barChart = document.getElementById('barChart');
+                if (stats.messagesByDay.length > 0 && stats.totalMessages > 0) {
+                    barChart.innerHTML = stats.messagesByDay.map(day => `
+                        <div class="bar-container">
+                            <div class="bar" style="height: ${Math.max(day.percentage, 5)}%;"></div>
+                            <span class="bar-label">${day.label}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    barChart.innerHTML = '<p class="text-muted" style="width: 100%; text-align: center;">No hay datos suficientes para mostrar el grafico</p>';
+                }
+
+                // Update recent conversations
+                const recentDiv = document.getElementById('recentConversations');
+                if (stats.recentConversations.length === 0) {
+                    recentDiv.innerHTML = '<p class="text-muted">No hay conversaciones recientes</p>';
+                } else {
+                    recentDiv.innerHTML = stats.recentConversations.map(conv => `
+                        <div class="recent-item">
+                            <span class="recent-item-title">Session ${conv.sessionId.substring(0, 8)}...</span>
+                            <span class="recent-item-value">${conv.messageCount} mensajes</span>
+                        </div>
+                    `).join('');
+                }
+
+                // Update activity summary
+                const summaryDiv = document.getElementById('activitySummary');
+                const avgMessages = stats.totalConversations > 0
+                    ? Math.round(stats.totalMessages / stats.totalConversations)
+                    : 0;
+
+                summaryDiv.innerHTML = `
+                    <div class="recent-item">
+                        <span class="recent-item-title">Promedio mensajes/conversacion</span>
+                        <span class="recent-item-value">${avgMessages}</span>
+                    </div>
+                    <div class="recent-item">
+                        <span class="recent-item-title">Ratio pregunta/respuesta</span>
+                        <span class="recent-item-value">${stats.aiMessages > 0 ? (stats.humanMessages / stats.aiMessages).toFixed(2) : '0'}</span>
+                    </div>
+                    <div class="recent-item">
+                        <span class="recent-item-title">Total interacciones</span>
+                        <span class="recent-item-value">${stats.totalMessages}</span>
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+                document.getElementById('statConversations').textContent = '0';
+                document.getElementById('statConversationsDetail').textContent = 'Error al cargar datos';
+            }
+        }
 
         protectPage(async (session) => {
             const { data } = await getUser();
@@ -410,6 +416,9 @@
             if (user) {
                 document.getElementById('userEmail').textContent = user.email;
                 document.getElementById('userAvatar').textContent = user.email.charAt(0).toUpperCase();
+
+                // Load analytics for this user
+                loadAnalytics(user.id);
             }
 
             document.querySelector('.dashboard-layout').style.opacity = '1';
